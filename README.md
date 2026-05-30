@@ -1,13 +1,14 @@
 # yoja-blueprint-kanban
 
-A full-stack task management application built with the yoja framework. It demonstrates the main features of yoja: HTTP server, HTTP client, WebSocket, session management, background workers, and the yoja-web frontend framework.
+A full-stack Kanban application built with the yoja framework. It demonstrates its core features in a real-world context: HTTP server, REST API, WebSocket for real-time updates, session management, background workers, and the yoja-web frontend framework with shadow DOM components and i18n.
 
 ## Table of Contents
 
 - [Architecture](#architecture)
-- [yoja API usage map](#yoja-api-usage-map)
+- [Gradle commands](#gradle-commands)
 - [Running the application](#running-the-application)
 - [Tests](#tests)
+- [yoja API usage map](#yoja-api-usage-map)
 
 ---
 
@@ -40,6 +41,138 @@ yoja-blueprint-kanban/
 ```
 
 The frontend is a single HTML page. Each section is a yoja-web component (shadow DOM, scoped CSS, i18n). The backend exposes a REST API and a WebSocket endpoint so all connected browsers see task updates in real time.
+
+---
+
+## Gradle commands
+
+| Command | Description |
+|---|---|
+| `./gradlew run` | Start the application (development) |
+| `./gradlew run --args="-p 9090 -ssl true"` | Start on a custom port with HTTPS |
+| `./gradlew clean test` | Run the full test suite |
+| `./gradlew distZip` | Package the application into a distribution ZIP |
+| `./gradlew clean build` | Clean and build the project |
+
+---
+
+## Running the application
+
+Default credentials: **login** `demo` / **password** `demo`
+
+| Argument | Default | Description |
+|---|---|---|
+| `-p <port>` | `8080` | HTTP(S) listening port |
+| `-ssl <true\|false>` | `false` | Enable HTTPS with a self-signed certificate |
+
+### Gradle (development)
+
+Starts the application directly via Gradle — no packaging step needed. Logback is configured automatically from `src/test/resources/logback-test.xml`.
+
+```bash
+./gradlew run
+./gradlew run --args="-p 9090 -ssl true"   # custom port + HTTPS
+```
+
+### Distribution ZIP (deployment)
+
+The `distZip` task packages the application and all its runtime dependencies into a self-contained archive with platform startup scripts.
+
+```bash
+./gradlew distZip
+```
+
+The archive is generated at `build/distributions/yoja-blueprint-kanban.zip`. Unzip it and run the startup script:
+
+```bash
+unzip build/distributions/yoja-blueprint-kanban.zip -d /opt/yoja-blueprint-kanban
+/opt/yoja-blueprint-kanban/yoja-blueprint-kanban/bin/yoja-blueprint-kanban          # Linux / macOS
+/opt/yoja-blueprint-kanban/yoja-blueprint-kanban/bin/yoja-blueprint-kanban -p 9090  # custom port
+```
+
+On Windows use `yoja-blueprint-kanban\bin\yoja-blueprint-kanban.bat` instead.
+
+### Eclipse
+
+1. Import the project as a **Gradle project** (`File > Import > Gradle > Existing Gradle Project`).
+2. Open `src/main/java/yoja/blueprint/kanban/Main.java`.
+3. Right-click → **Run As > Java Application**.
+4. To enable SSL: **Run Configurations > Arguments > Program arguments** → add `ssl`.
+
+### VS Code
+
+Create `.vscode/launch.json` at the repository root:
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Yoja Blueprint Kanban",
+            "request": "launch",
+            "mainClass": "yoja.blueprint.kanban.Main",
+            "projectName": "yoja-blueprint-kanban",
+            "args": "-p 8080"
+        },
+        {
+            "type": "java",
+            "name": "Yoja Blueprint Kanban (SSL)",
+            "request": "launch",
+            "mainClass": "yoja.blueprint.kanban.Main",
+            "projectName": "yoja-blueprint-kanban",
+            "args": "-p 8443 -ssl true"
+        }
+    ]
+}
+```
+
+Then press **F5** or open the **Run and Debug** panel and select `Yoja Blueprint Kanban`.
+
+---
+
+## Tests
+
+The test suite is in `src/test/java/yoja/blueprint/kanban/TaskAppTest.java`.  
+It is an end-to-end test that starts a real HTTP server and drives a headless Chrome browser via Selenium.
+
+### How it works
+
+**Server lifecycle** — `@BeforeAll` starts the server on port 9090. `@AfterAll` stops it. The server is shared across all tests so its in-memory task state accumulates across test methods.
+
+**Browser lifecycle** — `@BeforeEach` creates a fresh headless Chrome session. `@AfterEach` closes it. Each test therefore starts with a clean browser state (no cookies, no session).
+
+**Shadow DOM traversal** — Each yoja-web section uses an open shadow root for CSS isolation. Standard Selenium CSS selectors cannot pierce shadow roots. The tests use `SeleniumService.firstTag(selector)` and `findTags(selector)` which execute `yojaWeb.firstTag()` / `yojaWeb.findTags()` in the browser — these methods traverse all shadow roots recursively.
+
+**Page readiness** — `selenium.getHttpPage(url)` navigates and then polls until the yojaWeb framework is fully initialized.
+
+**Async waiting** — After user interactions (button clicks, form submissions) the test must wait for the async server response before asserting. `selenium.repeatScript(duration, js)` retries the given JavaScript until it returns a non-null value, or until the timeout expires.
+
+### Test order
+
+Tests run in a fixed order (`@TestMethodOrder + @Order`) so that state-mutating tests do not interfere:
+
+| Order | Test | State change |
+|---|---|---|
+| 1 | `loginPageIsDisplayed` | none |
+| 2 | `loginWithInvalidCredentials` | none |
+| 3 | `loginWithValidCredentials` | none |
+| 4 | `logoutHidesTaskBoard` | none |
+| 5 | `addTaskAppearsOnBoard` | +1 task (todo) |
+| 6 | `moveTaskToNextStatus` | 1 task todo → in-progress |
+| 7 | `deleteTask` | −1 task |
+| 8 | `openTaskDetail` | none |
+| 9 | `taskDetailBackButtonReturnsToBoard` | none |
+
+### Running the tests
+
+```bash
+./gradlew clean test
+```
+
+The HTML report is generated at `build/reports/tests/test/index.html`.
+
+> Chrome and ChromeDriver must be installed and on the `PATH`. The tests run in headless mode by default.
 
 ---
 
@@ -88,127 +221,3 @@ The frontend is a single HTML page. Each section is a yoja-web component (shadow
 | Find all controllers | `TaskDetailControler.js` | `yojaWeb.controlerService.find(document, filter)` |
 | Find multiple elements | `TaskFormControler.js` | `section.findTags(selector)` |
 | Store typed value | `LoginControler.js` | `storageService.setLocalItem(key, value)` |
-
----
-
-## Running the application
-
-Default credentials: **login** `demo` / **password** `demo`
-
-| Argument | Default | Description |
-|---|---|---|
-| `-p <port>` | `8080` | HTTP(S) listening port |
-| `-ssl <true\|false>` | `false` | Enable HTTPS with a self-signed certificate |
-
-### Gradle run (development)
-
-Starts the application directly via Gradle — no packaging step needed. Logback is configured automatically from `src/test/resources/logback-test.xml`.
-
-```bash
-./gradlew run
-./gradlew run --args="-p 9090 -ssl true"   # custom port + HTTPS
-```
-
-### Distribution ZIP (deployment)
-
-The `distZip` task packages the application and all its runtime dependencies into a self-contained archive with platform startup scripts.
-
-```bash
-./gradlew :yoja-blueprint-kanban:distZip
-```
-
-The archive is generated at `yoja-blueprint-kanban/build/distributions/yoja-blueprint-kanban.zip`. Unzip it and run the startup script:
-
-```bash
-unzip yoja-blueprint-kanban/build/distributions/yoja-blueprint-kanban.zip -d /opt/yoja-blueprint-kanban
-/opt/yoja-blueprint-kanban/yoja-blueprint-kanban/bin/yoja-blueprint-kanban          # Linux / macOS
-/opt/yoja-blueprint-kanban/yoja-blueprint-kanban/bin/yoja-blueprint-kanban -p 9090  # custom port
-```
-
-On Windows use `yoja-blueprint-kanban\bin\yoja-blueprint-kanban.bat` instead.
-
-### Eclipse
-
-1. Import the project as a **Gradle project** (`File > Import > Gradle > Existing Gradle Project`), root directory: `yoja-framework/`.
-2. Open `src/main/java/yoja/blueprint/kanban/Main.java`.
-3. Right-click → **Run As > Java Application**.
-4. To enable SSL: **Run Configurations > Arguments > Program arguments** → add `ssl`.
-
-### VS Code
-
-Create `.vscode/launch.json` at the repository root:
-
-```json
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "java",
-            "name": "Yoja Blueprint Kanban",
-            "request": "launch",
-            "mainClass": "yoja.blueprint.kanban.Main",
-            "projectName": "yoja-blueprint-kanban",
-            "args": "-p 8080"
-        },
-        {
-            "type": "java",
-            "name": "Yoja Blueprint Kanban (SSL)",
-            "request": "launch",
-            "mainClass": "yoja.blueprint.kanban.Main",
-            "projectName": "yoja-blueprint-kanban",
-            "args": "-p 8443 -ssl true"
-        }
-    ]
-}
-```
-
-Then press **F5** or open the **Run and Debug** panel and select `Yoja Blueprint Kanban`.
-
----
-
-## Tests
-
-The test suite is in `src/test/java/yoja/blueprint/kanban/TaskAppTest.java`.  
-It is an end-to-end test that starts a real HTTP server and drives a headless Chrome browser via Selenium.
-
-### How it works
-
-**Server lifecycle** — `@BeforeAll` starts `YojaApp` and the server on port 9090. `@AfterAll` stops both. The server is shared across all tests so its in-memory task state accumulates across test methods.
-
-**Browser lifecycle** — `@BeforeEach` creates a fresh headless Chrome session. `@AfterEach` closes it. Each test therefore starts with a clean browser state (no cookies, no session).
-
-**Shadow DOM traversal** — Each yoja-web section uses an open shadow root for CSS isolation. Standard Selenium CSS selectors cannot pierce shadow roots. The tests use `SeleniumService.firstTag(selector)` and `findTags(selector)` which execute `yojaWeb.firstTag()` / `yojaWeb.findTags()` in the browser — these methods traverse all shadow roots recursively.
-
-**Page readiness** — `selenium.getHttpPage(url)` navigates and then polls until the yojaWeb framework is fully initialized. It detects whether the page uses the framework by checking for `yw-controler`, `yw-css`, `yw-language` or `yw-slot` attributes in the DOM, then waits for `yojaWeb.isReady()`.
-
-**Async waiting** — After user interactions (button clicks, form submissions) the test must wait for the async server response before asserting. `selenium.repeatScript(duration, js)` retries the given JavaScript until it returns a non-null value, or until the timeout expires.
-
-### Test order
-
-Tests run in a fixed order (`@TestMethodOrder + @Order`) so that state-mutating tests do not interfere:
-
-| Order | Test | State change |
-|---|---|---|
-| 1 | `loginPageIsDisplayed` | none |
-| 2 | `loginWithInvalidCredentials` | none |
-| 3 | `loginWithValidCredentials` | none |
-| 4 | `logoutHidesTaskBoard` | none |
-| 5 | `addTaskAppearsOnBoard` | +1 task (todo) |
-| 6 | `moveTaskToNextStatus` | 1 task todo → in-progress |
-| 7 | `deleteTask` | −1 task |
-| 8 | `openTaskDetail` | none |
-| 9 | `taskDetailBackButtonReturnsToBoard` | none |
-
-### Running the tests
-
-```bash
-./gradlew clean test
-```
-
-The HTML report is generated at:
-
-```
-yoja-blueprint-kanban/build/reports/tests/test/index.html
-```
-
-> Chrome and ChromeDriver must be installed and on the `PATH`. The tests run in headless mode by default.

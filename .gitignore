@@ -1,0 +1,14 @@
+build
+bin
+.metadata
+.classpath
+.project
+.gradle
+.settings
+.vertx
+.claude
+.vscode
+yoja-certificate
+yoja-crypto
+yoja-lucene
+yoja-mail

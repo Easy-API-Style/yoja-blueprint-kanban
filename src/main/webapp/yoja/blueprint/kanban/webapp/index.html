@@ -1,0 +1,73 @@
+<!--
+  Copyright 2026 easy api <easy.api.contact@gmail.com>
+  https://easygoingapi.com
+  https://github.com/Easy-API-Style/yoja-framework
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta http-equiv="encoding" content="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Yoja Task Manager</title>
+    <script type="module" src="/yoja/YojaWeb-1.0.0.js"></script>
+</head>
+<body yw-controler="./indexControler.js"
+      yw-css="./index.css"
+      style="display: none">
+    <!-- Header injected dynamically via yojaWeb.prepend in indexControler.js -->
+    <!-- Login section: shown when not authenticated -->
+    <section id="login-section"
+             yw-controler="./sections/login/LoginControler.js"
+             yw-css="./sections/login/login.css"
+             yw-language="./sections/login/login.xml">
+        <h2 yw-i18n="login.title"></h2>
+        <form>
+            <input type="text" name="username" yw-i18n-placeholder="login.user"/>
+            <input type="password" name="password" yw-i18n-placeholder="login.pass"/>
+            <button type="submit" yw-i18n="login.submit"></button>
+        </form>
+        <p class="error-msg"></p>
+    </section>
+    <!-- Task board: shown after login, Flexbox kanban layout -->
+    <section id="taskboard-section"
+             yw-controler="./sections/taskboard/TaskBoardControler.js"
+             yw-css="./sections/taskboard/taskboard.css"
+             yw-language="./sections/taskboard/taskboard.xml">
+        <div class="quote-bar"></div>
+        <div class="columns">
+            <div class="column" data-status="todo">
+                <h3 yw-i18n="col.todo"></h3>
+                <div class="cards"></div>
+            </div>
+            <div class="column" data-status="in-progress">
+                <h3 yw-i18n="col.inprogress"></h3>
+                <div class="cards"></div>
+            </div>
+            <div class="column" data-status="done">
+                <h3 yw-i18n="col.done"></h3>
+                <div class="cards"></div>
+            </div>
+        </div>
+    </section>
+    <!-- Task detail: full-page overlay when ?task=<id> is set -->
+    <div yw-include="./sections/taskdetail/taskdetail.html"></div>
+    <!-- Task form: add a new task (body loaded via yw-slot) -->
+    <section id="taskform-section"
+             yw-controler="./sections/taskform/TaskFormControler.js"
+             yw-css="./sections/taskform/taskform.css"
+             yw-language="./sections/taskform/taskform.xml"
+             yw-slot="./sections/taskform/taskform.html"></section>
+</body>
+</html>

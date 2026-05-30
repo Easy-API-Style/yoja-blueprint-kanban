@@ -1,0 +1,48 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'java-library'
+    id 'eclipse'
+}
+
+application {
+    mainClass = 'yoja.blueprint.kanban.Main'
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs 'src/main/webapp'
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
+run {
+    jvmArgs "-Dlogback.configurationFile=${projectDir}/src/test/resources/logback-test.xml"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'com.easygoingapi:yoja-core:0.0.0-SNAPSHOT'
+    implementation 'com.easygoingapi:yoja-http-server:0.0.0-SNAPSHOT'
+    implementation 'com.easygoingapi:yoja-http-client:0.0.0-SNAPSHOT'
+    runtimeOnly 'com.easygoingapi:yoja-web:0.0.0-SNAPSHOT'
+    testImplementation 'com.easygoingapi:yoja-selenium:0.0.0-SNAPSHOT'
+    
+    implementation 'ch.qos.logback:logback-classic:1.5.32'
+    implementation 'org.slf4j:slf4j-api:2.0.17'
+}

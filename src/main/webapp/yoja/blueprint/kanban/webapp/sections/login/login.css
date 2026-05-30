@@ -1,0 +1,63 @@
+/*
+ * Copyright 2026 easy api <easy.api.contact@gmail.com>
+ * https://easygoingapi.com
+ * https://github.com/Easy-API-Style/yoja-framework
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import '../../common.css';
+
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 56px);
+    padding: 24px;
+}
+
+h2 {
+    margin-bottom: 24px;
+    color: #2c3e50;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px;
+}
+
+input {
+    padding: 10px 14px;
+    font-size: 1rem;
+}
+
+button[type=submit] {
+    padding: 10px;
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    font-size: 1rem;
+}
+
+button[type=submit]:hover {
+    background: #3d5166;
+}
+
+.error-msg {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}

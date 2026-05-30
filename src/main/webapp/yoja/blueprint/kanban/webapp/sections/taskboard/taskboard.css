@@ -1,0 +1,104 @@
+/*
+ * Copyright 2026 easy api <easy.api.contact@gmail.com>
+ * https://easygoingapi.com
+ * https://github.com/Easy-API-Style/yoja-framework
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import '../../common.css';
+
+:host {
+    display: block;
+    padding: 10px;
+}
+
+.quote-bar {
+    padding: 12px 16px;
+    background: #eaf0fb;
+    border-left: 4px solid #2980b9;
+    margin-bottom: 24px;
+    font-style: italic;
+    color: #555;
+    border-radius: 0 4px 4px 0;
+    display: none;
+}
+
+/* Flexbox kanban columns */
+.columns {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.column {
+    flex: 1;
+    background: #fff;
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    min-height: 150px;
+}
+
+.column h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.card {
+    background: #f9fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.task-title {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.task-assignee {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.card-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.btn-detail,
+.btn-next,
+.btn-delete {
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    background: #fff;
+    font-size: 0.8rem;
+}
+
+.btn-delete:hover { background: #fee2e2; border-color: #fca5a5; }
+.btn-next:hover   { background: #e0f2fe; border-color: #7dd3fc; }
+
+/* Responsive: stack columns on mobile */
+@media (max-width: 767px) {
+    .columns { flex-direction: column; }
+    .column  { width: 100%; padding: 0; }
+}

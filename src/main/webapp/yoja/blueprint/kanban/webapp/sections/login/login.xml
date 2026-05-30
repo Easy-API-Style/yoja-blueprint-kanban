@@ -1,0 +1,39 @@
+<!--
+  Copyright 2026 easy api <easy.api.contact@gmail.com>
+  https://easygoingapi.com
+  https://github.com/Easy-API-Style/yoja-framework
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<yw-language>
+    <yw-text key="login.title">
+        <en>Sign in</en>
+        <fr>Connexion</fr>
+    </yw-text>
+    <yw-text key="login.user">
+        <en>Username</en>
+        <fr>Identifiant</fr>
+    </yw-text>
+    <yw-text key="login.pass">
+        <en>Password</en>
+        <fr>Mot de passe</fr>
+    </yw-text>
+    <yw-text key="login.submit">
+        <en>Sign in</en>
+        <fr>Se connecter</fr>
+    </yw-text>
+    <yw-text key="login.error">
+        <en>Invalid username or password</en>
+        <fr>Identifiant ou mot de passe incorrect</fr>
+    </yw-text>
+</yw-language>

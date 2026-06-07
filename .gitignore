@@ -8,7 +8,13 @@ bin
 .vertx
 .claude
 .vscode
-yoja-certificate
-yoja-crypto
-yoja-lucene
-yoja-mail
+
+# IDE IntelliJ IDEA
+.idea
+*.iml
+*.iws
+*.ipr
+
+# Fichiers OS
+.DS_Store
+Thumbs.db

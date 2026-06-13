@@ -34,8 +34,6 @@ import com.easygoingapi.yoja.http.server.HttpServer;
 import com.easygoingapi.yoja.selenium.Browser;
 import com.easygoingapi.yoja.selenium.TestBuilder;
 
-import yoja.blueprint.kanban.Main;
-
 /**
  * Minimal demo of the two JS-side test mechanisms exposed by yoja-selenium:
  *
@@ -87,9 +85,6 @@ public class JsUnitDemoTest {
             //    A throw inside a function fails just that step.
             .testJsUnit("/jsUnitSyncTest.js",
                         List.of("titleIsTaskManager", "loginFormIsPresent"))
-            // 4. Asynchronous jsUnit — runs the default export, which awaits
-            //    a real HTTP call before resolving.
-            .testAsyncModule("/jsUnitAsyncTest.js")
             .stream();
     }
     

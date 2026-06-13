@@ -20,6 +20,7 @@ package yoja.blueprint.kanban;
 import static com.easygoingapi.yoja.core.util.FutureUtil.await;
 import static com.easygoingapi.yoja.core.util.FutureUtil.awaitValue;
 
+import java.time.Duration;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
@@ -32,8 +33,6 @@ import org.slf4j.LoggerFactory;
 import com.easygoingapi.yoja.http.server.HttpServer;
 import com.easygoingapi.yoja.selenium.Browser;
 import com.easygoingapi.yoja.selenium.TestBuilder;
-
-import yoja.blueprint.kanban.Main;
 
 /**
  * Minimal demo of the two ES6 module entry points exposed by yoja-selenium:
@@ -90,6 +89,9 @@ public class TestModuleDemoTest {
             // 4. Async module — module.default(args, resolve, reject) is called;
             //    the step ends only when resolve() or reject() fires.
             .testAsyncModule("/moduleAsyncTest.js")
+            // 5. Repeat module — module.default(args, resolve, repeat) is polled
+            //    until it calls resolve() or the 5s deadline elapses.
+            .repeatTestModuleUntil(Duration.ofSeconds(5), "/moduleRepeatTest.js")
             .stream();
     }
     

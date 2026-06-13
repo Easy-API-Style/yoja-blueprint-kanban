@@ -91,8 +91,9 @@ public class QuoteService {
                         }
                         return result;
                     })
-                    .onFailure(e -> {
-                        LOGGER.error("External quote API unavailable failed", e);
+                    .otherwise(e -> {
+                        LOGGER.error("External quote API unavailable failed {}", e.getMessage());
+                        return FALLBACK;
                     });
     }
 

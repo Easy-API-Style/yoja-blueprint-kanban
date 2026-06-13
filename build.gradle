@@ -37,11 +37,11 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.easygoingapi:yoja-core:0.0.0-SNAPSHOT'
-    implementation 'com.easygoingapi:yoja-http-server:0.0.0-SNAPSHOT'
-    implementation 'com.easygoingapi:yoja-http-client:0.0.0-SNAPSHOT'
-    runtimeOnly 'com.easygoingapi:yoja-web:0.0.0-SNAPSHOT'
-    testImplementation 'com.easygoingapi:yoja-selenium:0.0.0-SNAPSHOT'
+    implementation 'com.easygoingapi:yoja-core:1.0.1'
+    implementation 'com.easygoingapi:yoja-http-server:1.0.1'
+    implementation 'com.easygoingapi:yoja-http-client:1.0.1'
+    runtimeOnly 'com.easygoingapi:yoja-web:1.0.1'
+    testImplementation 'com.easygoingapi:yoja-selenium:1.0.1'
     
     implementation 'ch.qos.logback:logback-classic:1.5.32'
     implementation 'org.slf4j:slf4j-api:2.0.17'
